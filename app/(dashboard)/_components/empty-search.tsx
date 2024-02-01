@@ -8,7 +8,7 @@ export const EmptySearch = ({ search }: EmptySearchProps) => {
   return (
     <div className="flex h-full justify-center items-center flex-col gap-5">
       <Player
-        src={"/noResult.json"}
+        src={"/notFound.json"}
         background="transparent"
         autoplay
         loop

@@ -36,3 +36,38 @@ export const create = mutation({
     return canvas;
   },
 });
+
+export const remove = mutation({
+  args: {
+    id: v.id("canvases"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    await ctx.db.delete(args?.id);
+
+    //TODO: later remove fav relations.
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("canvases"),
+    title: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    console.log(identity);
+    if (!identity) throw new Error("Unauthorized");
+
+    const title = args?.title.trim();
+    if (!title) throw new Error("Title is required");
+
+    const canvas = await ctx.db.patch(args?.id, {
+      title: args?.title,
+    });
+
+    return canvas;
+  },
+});

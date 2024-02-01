@@ -20,7 +20,7 @@ const DashboardPage = ({ searchParams }: DashboardPageProps) => {
   const { organization } = useOrganization();
 
   return (
-    <div className="bg-stone-300 ml-2 lg:ml-0 mr-2 flex-1 h-[calc(100%-80px)] rounded-sm p-6">
+    <div className="ml-2 lg:ml-0 mr-2 flex-1 h-[calc(100%-80px)] rounded-sm p-6">
       {!organization ? (
         <EmptyOrg />
       ) : (

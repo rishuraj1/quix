@@ -6,6 +6,7 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { api } from "@/convex/_generated/api";
 import { useOrganization } from "@clerk/nextjs";
 import { useApiMutation } from "@/hooks/use-api-mutation";
+import { toast } from "sonner";
 
 export const EmptyCanvases = () => {
   const { organization } = useOrganization();
@@ -17,7 +18,14 @@ export const EmptyCanvases = () => {
     mutate({
       title: "Untitled",
       orgId: organization?.id,
-    });
+    })
+      .then((id) => {
+        toast.success("Canvas created!");
+        // TODO: navigate to canvas
+      })
+      .catch((err) => {
+        toast.error("Failed to create canvas.");
+      });
   };
 
   return (
@@ -30,7 +38,7 @@ export const EmptyCanvases = () => {
         className="w-[200px] h-[200px]"
       />
       <p className="text-zinc-700 justify-center text-center">
-        No canvases found.
+        No canvases yet. Create one to get started!
       </p>
       <Button disabled={pending} variant={"outline"} onClick={onClick}>
         Create a canvas
