@@ -1,7 +1,7 @@
 "use client";
 
 import qs from "query-string";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useDebounce } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -36,6 +36,14 @@ export const SearchInput = () => {
         onChange={handleChange}
         value={value}
       />
+      {value && (
+        <button
+          className="absolute top-1/2 left-[490px] transform -translate-y-1/2 text-muted-foreground h-4 w-4"
+          onClick={() => setValue("")}
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };

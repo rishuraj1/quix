@@ -54,18 +54,29 @@ export const OrgSidebar = () => {
         <Button
           asChild
           size={"lg"}
-          className="font-normal justify-start px-2 w-full"
+          className={cn(
+            "font-normal justify-start px-2 w-full hover:bg-stone-200 transition",
+            favourites ? "" : "bg-stone-200 hover:bg-stone-300 transition",
+          )}
           variant={favourites ? "ghost" : "secondary"}
         >
           <Link href="/">
-            <LayoutDashboard className="h-4 w-4 mr-2" />
+            <LayoutDashboard
+              className={cn(
+                "h-4 w-4 mr-2",
+                favourites ? "" : "text-blue-800 fill-blue-800",
+              )}
+            />
             Team Canvas
           </Link>
         </Button>
         <Button
           asChild
           size={"lg"}
-          className="font-normal justify-start px-2 w-full"
+          className={cn(
+            "font-normal justify-start px-2 w-full hover:bg-stone-200 transition",
+            favourites ? "bg-stone-200 hover:bg-stone-300 transition" : "",
+          )}
           variant={favourites ? "secondary" : "ghost"}
         >
           <Link
@@ -74,7 +85,12 @@ export const OrgSidebar = () => {
               query: { favourites: true },
             }}
           >
-            <Star className="h-4 w-4 mr-2" />
+            <Star
+              className={cn(
+                "h-4 w-4 mr-2",
+                favourites ? "text-yellow-400 fill-yellow-400" : "",
+              )}
+            />
             Favourites
           </Link>
         </Button>
