@@ -15,6 +15,24 @@ export const get = query({
       .order("desc")
       .collect();
 
-    return canvases;
+    const canvasesWithFavouriteRelation = canvases.map((canvas) => {
+      return ctx.db
+        .query("favourites")
+        .withIndex("by_user_canvas", (q) =>
+          q.eq("userId", identity.subject).eq("canvasId", canvas._id),
+        )
+        .unique()
+        .then((favourite) => {
+          return {
+            ...canvas,
+            isFavourite: !!favourite,
+          };
+        });
+    });
+
+    const canvasesWithFavouriteBoolean = Promise.all(
+      canvasesWithFavouriteRelation,
+    );
+    return canvasesWithFavouriteBoolean;
   },
 });

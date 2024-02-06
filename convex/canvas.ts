@@ -71,3 +71,65 @@ export const update = mutation({
     return canvas;
   },
 });
+
+export const favourite = mutation({
+  args: {
+    id: v.id("canvases"),
+    orgId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    const canvas = await ctx.db.get(args?.id);
+    if (!canvas) throw new Error("Canvas not found");
+
+    const userId = identity?.subject;
+
+    const existingFavourite = await ctx.db
+      .query("favourites")
+      .withIndex("by_user_canvas_org", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("canvasId", args?.id)
+          .eq("orgId", args?.orgId),
+      )
+      .unique();
+
+    if (existingFavourite) throw new Error("Already favourited");
+
+    await ctx.db.insert("favourites", {
+      userId,
+      canvasId: args?.id,
+      orgId: args?.orgId,
+    });
+
+    return canvas;
+  },
+});
+
+export const unfavourite = mutation({
+  args: {
+    id: v.id("canvases"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    const canvas = await ctx.db.get(args?.id);
+    if (!canvas) throw new Error("Canvas not found");
+
+    const userId = identity?.subject;
+
+    const existingFavourite = await ctx.db
+      .query("favourites")
+      .withIndex("by_user_canvas", (q) =>
+        q.eq("userId", userId).eq("canvasId", canvas?._id),
+      )
+      .unique();
+
+    if (!existingFavourite) throw new Error("Favorited canvas not found");
+
+    await ctx.db.delete(existingFavourite?._id);
+  },
+});

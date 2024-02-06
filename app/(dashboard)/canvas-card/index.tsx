@@ -5,10 +5,13 @@ import { Overlay } from "./overlay";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { api } from "@/convex/_generated/api";
 import { Footer } from "./footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Actions } from "@/components/actions";
 import { MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 
 interface CanvasCardProps {
   id: string;
@@ -37,6 +40,25 @@ export const CanvasCard = ({
     addSuffix: true,
   });
 
+  const { mutate: onFavourite, pending: pendingFavourite } = useApiMutation(
+    api.canvas.favourite,
+  );
+  const { mutate: onUnfavourite, pending: pendingUnfavourite } = useApiMutation(
+    api.canvas.unfavourite,
+  );
+
+  const toggleFavourite = () => {
+    if (isFavourite) {
+      onUnfavourite({ id }).catch(() =>
+        toast.error("Failed to unfavourite canvas"),
+      );
+    } else {
+      onFavourite({ id, orgId }).catch(() =>
+        toast.error("Failed to favourite canvas"),
+      );
+    }
+  };
+
   return (
     <Link href={`/canvas/${id}`}>
       <div className="group aspect-[100/127] border rounded-md flex flex-col justify-between overflow-hidden  lg:hover:scale-110 transition ease-in-out duration-500">
@@ -54,8 +76,8 @@ export const CanvasCard = ({
           authorLabel={authorLabel}
           createdAtLabel={createdAtLabel}
           title={title}
-          onClick={() => {}}
-          disabled={false}
+          onClick={toggleFavourite}
+          disabled={pendingFavourite || pendingUnfavourite}
         />
       </div>
     </Link>

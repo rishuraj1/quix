@@ -66,7 +66,7 @@ export const CanvasList = ({ orgId, query }: CanvasListProps) => {
             authorName={canvas?.authorName}
             createdAt={canvas?._creationTime}
             orgId={canvas?.orgId}
-            isFavourite={false}
+            isFavourite={canvas?.isFavourite}
           />
         ))}
       </div>
