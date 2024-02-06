@@ -47,7 +47,16 @@ export const remove = mutation({
 
     await ctx.db.delete(args?.id);
 
-    //TODO: later remove fav relations.
+    const userId = identity?.subject;
+
+    const existingFavourite = await ctx.db
+      .query("favourites")
+      .withIndex("by_user_canvas", (q) =>
+        q.eq("userId", userId).eq("canvasId", args?.id),
+      )
+      .unique();
+
+    if (existingFavourite) await ctx.db.delete(existingFavourite?._id);
   },
 });
 
@@ -88,11 +97,8 @@ export const favourite = mutation({
 
     const existingFavourite = await ctx.db
       .query("favourites")
-      .withIndex("by_user_canvas_org", (q) =>
-        q
-          .eq("userId", userId)
-          .eq("canvasId", args?.id)
-          .eq("orgId", args?.orgId),
+      .withIndex("by_user_canvas", (q) =>
+        q.eq("userId", userId).eq("canvasId", args?.id),
       )
       .unique();
 

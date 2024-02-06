@@ -18,7 +18,7 @@ interface CanvasListProps {
 }
 
 export const CanvasList = ({ orgId, query }: CanvasListProps) => {
-  const data = useQuery(api?.canvases.get, { orgId });
+  const data = useQuery(api?.canvases.get, { orgId, ...query });
 
   if (data === undefined) {
     return (
