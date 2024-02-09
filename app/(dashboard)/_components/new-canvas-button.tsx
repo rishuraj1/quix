@@ -4,6 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface NewCanvasButtonProps {
@@ -12,6 +13,7 @@ interface NewCanvasButtonProps {
 }
 
 export const NewCanvasButton = ({ orgId, disabled }: NewCanvasButtonProps) => {
+  const router = useRouter();
   const { mutate, pending } = useApiMutation(api.canvas.create);
 
   const onClick = () => {
@@ -21,7 +23,7 @@ export const NewCanvasButton = ({ orgId, disabled }: NewCanvasButtonProps) => {
     })
       .then((id) => {
         toast.success("Canvas created!");
-        // TODO: navigate to canvas
+        router.push(`/canvas/${id}`);
       })
       .catch((err) => {
         toast.error("Failed to create canvas.");

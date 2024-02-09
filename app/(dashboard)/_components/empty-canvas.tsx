@@ -7,10 +7,12 @@ import { api } from "@/convex/_generated/api";
 import { useOrganization } from "@clerk/nextjs";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const EmptyCanvases = () => {
   const { organization } = useOrganization();
   const { mutate, pending } = useApiMutation(api.canvas.create);
+  const router = useRouter();
 
   const onClick = () => {
     if (!organization) return;
@@ -21,7 +23,7 @@ export const EmptyCanvases = () => {
     })
       .then((id) => {
         toast.success("Canvas created!");
-        // TODO: navigate to canvas
+        router.push(`/canvas/${id}`);
       })
       .catch((err) => {
         toast.error("Failed to create canvas.");

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const create = mutation({
   args: {
@@ -137,5 +137,16 @@ export const unfavourite = mutation({
     if (!existingFavourite) throw new Error("Favorited canvas not found");
 
     await ctx.db.delete(existingFavourite?._id);
+  },
+});
+
+export const get = query({
+  args: {
+    id: v.id("canvases"),
+  },
+  handler: async (ctx, args) => {
+    const canvas = await ctx.db.get(args?.id);
+
+    return canvas;
   },
 });

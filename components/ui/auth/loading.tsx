@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Player, Controls } from "@lottiefiles/react-lottie-player";
 
 export const Loading = () => {
   return (
