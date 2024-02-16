@@ -115,7 +115,7 @@ export type CanvasState =
     }
   | {
       mode: CanvasMode.Resizing;
-      initialBounce: XYWH;
+      initialBounds: XYWH;
       corner: Side;
     }
   | {
@@ -131,3 +131,10 @@ export enum CanvasMode {
   Resizing,
   Pencil,
 }
+
+export type Layer =
+  | RectangleLayer
+  | EllipseLayer
+  | PathLayer
+  | TextLayer
+  | NoteLayer;
