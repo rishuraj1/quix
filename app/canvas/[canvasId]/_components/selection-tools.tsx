@@ -5,6 +5,10 @@ import { Camera, Color } from "@/types/canvas";
 import { useMutation, useSelf } from "@/liveblocks.config";
 import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 import { ColorPicker } from "./color-picker";
+import { useDeleteLayers } from "@/hooks/use-delete-layers";
+import { Hint } from "@/components/hint";
+import { Button } from "@/components/ui/button";
+import { BringToFront, SendToBack, Trash2 } from "lucide-react";
 
 interface SelectionToolsProps {
   camera: Camera;
@@ -15,14 +19,67 @@ interface SelectionToolsProps {
 export const SelectionTools = memo(
   ({ camera, setLastUsedColor, lastUsedColor }: SelectionToolsProps) => {
     const selection = useSelf((me) => me.presence.selection);
+
+    const moveToBack = useMutation(
+      ({ storage }) => {
+        const liveLayerIds = storage.get("layerIds");
+        const indices: number[] = [];
+
+        const arr = liveLayerIds.toArray();
+
+        for (let i = 0; i < arr.length; i++) {
+          if (selection.includes(arr[i])) {
+            indices.push(i);
+          }
+        }
+
+        for (let i = 0; i < indices.length; i++) {
+          liveLayerIds.move(indices[i], i);
+        }
+      },
+      [selection],
+    );
+
+    const moveToFront = useMutation(
+      ({ storage }) => {
+        const liveLayerIds = storage.get("layerIds");
+        const indices: number[] = [];
+
+        const arr = liveLayerIds.toArray();
+
+        for (let i = 0; i < arr.length; i++) {
+          if (selection.includes(arr[i])) {
+            indices.push(i);
+          }
+        }
+
+        for (let i = indices.length - 1; i >= 0; i--) {
+          liveLayerIds.move(indices[i], liveLayerIds.length - 1);
+        }
+      },
+      [selection],
+    );
+
+    const setFill = useMutation(
+      ({ storage }, fill: Color) => {
+        const liveLayers = storage.get("layers");
+        setLastUsedColor(fill);
+
+        selection?.forEach((layerId) => {
+          liveLayers.get(layerId)?.set("fill", fill);
+        });
+      },
+      [selection, setLastUsedColor],
+    );
+
+    const deleteLayers = useDeleteLayers();
+
     const selectionBounds = useSelectionBounds();
 
     if (!selectionBounds) return null;
 
     const x = selectionBounds.width / 2 + selectionBounds.x + camera.x;
     const y = selectionBounds.y + camera.y;
-
-    const setFill = useMutation;
 
     return (
       <div
@@ -34,7 +91,26 @@ export const SelectionTools = memo(
                 )`,
         }}
       >
-        <ColorPicker onChange={() => {}} lastUsedColor={lastUsedColor} />
+        <ColorPicker onChange={setFill} lastUsedColor={lastUsedColor} />
+        <div className="flex gap-x-0.5">
+          <Hint label="Bring to front">
+            <Button variant={"canvas"} size={"icon"} onClick={moveToFront}>
+              <BringToFront className="w-5 h-5" />
+            </Button>
+          </Hint>
+          <Hint label="Send to back">
+            <Button variant={"canvas"} size={"icon"} onClick={moveToBack}>
+              <SendToBack className="w-5 h-5" />
+            </Button>
+          </Hint>
+        </div>
+        <div className="flex items-center pl-2 ml-2 border-l border-neutral-200">
+          <Hint label="Delete">
+            <Button variant={"canvas"} size={"icon"} onClick={deleteLayers}>
+              <Trash2 className="w-5 h-5 hover:text-rose-600" />
+            </Button>
+          </Hint>
+        </div>
       </div>
     );
   },
