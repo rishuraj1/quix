@@ -93,11 +93,11 @@ export type CanvasState =
     }
   | {
       mode: CanvasMode.Pressing;
-      orogin: Point;
+      origin: Point;
     }
   | {
       mode: CanvasMode.SelectionNet;
-      orogin: Point;
+      origin: Point;
       current?: Point;
     }
   | {
